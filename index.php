@@ -1,5 +1,4 @@
 <?php
-<?php
 session_start();
 require_once("LineLoginLib.php");
  
@@ -128,4 +127,4 @@ if(isset($_POST['lineLogout'])){
     $LineLogin->redirect("login_uselib.php");
 }
 ?>
-?>
+
