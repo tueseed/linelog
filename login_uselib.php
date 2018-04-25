@@ -86,7 +86,8 @@ if(isset($_SESSION['ses_login_userData_val']) && $_SESSION['ses_login_userData_v
     echo "Line UserID: ".$lineUserData['sub']."<br>";
     echo "Line Display Name: ".$lineUserData['name']."<br>";
     echo '<img style="width:100px;" src="'.$lineUserData['picture'].'" /><br>';
-    echo pushmsg($lineUserData['sub']);
+  $uid = $lineUserData['sub'];
+    echo pushmsg($uid);
 }
  
  
