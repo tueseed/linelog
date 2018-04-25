@@ -7,7 +7,7 @@ function pushmsg($uid)
 $url = 'https://api.line.me/v2/bot/message/push';
 $messages = [
            "type"=> "text",
-            "text"=> "้Hi.. This Message From LINE LOGIN"
+            "text"=> "nxlkznvozvnkzlckvn";
         ];
  $data = [
             'to' => $uid,
