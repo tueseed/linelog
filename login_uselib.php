@@ -1,7 +1,31 @@
 <?php
 session_start();
 require_once("LineLoginLib.php");
- 
+function pushmsg($uid)
+{
+ $access_token ='e389e6701d0f047c734d9d5c1c197103';
+$url = 'https://api.line.me/v2/bot/message/push';
+$messages = [
+           "type"=> "text",
+            "text"=> "้Hi.. This Message From LINE LOGIN"
+        ];
+ $data = [
+            'to' => $uid,
+            'messages' => [$messages]
+        ];
+$post = json_encode($data);
+        $headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $access_token);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+
+}
 // กรณีต้องการตรวจสอบการแจ้ง error ให้เปิด 3 บรรทัดล่างนี้ให้ทำงาน กรณีไม่ ให้ comment ปิดไป
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -62,6 +86,7 @@ if(isset($_SESSION['ses_login_userData_val']) && $_SESSION['ses_login_userData_v
     echo "Line UserID: ".$lineUserData['sub']."<br>";
     echo "Line Display Name: ".$lineUserData['name']."<br>";
     echo '<img style="width:100px;" src="'.$lineUserData['picture'].'" /><br>';
+    echo pushmsg($lineUserData['sub']);
 }
  
  
