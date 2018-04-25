@@ -80,7 +80,7 @@ if(isset($_SESSION['ses_login_refreshToken_val']) && $_SESSION['ses_login_refres
         if(isset($new_accToken) && is_string($new_accToken)){
             $_SESSION['ses_login_accToken_val'] = $new_accToken;
         }       
-        $LineLogin->redirect("login_uselib.php");
+        $LineLogin->redirect("index.php");
     }
 }
 // Revoke Token
@@ -124,7 +124,7 @@ if(isset($_POST['lineLogout'])){
     <button type="submit" name="lineLogin">LINE Login</button>
     </form>   
     ';
-    $LineLogin->redirect("login_uselib.php");
+    $LineLogin->redirect("index.php");
 }
 ?>
 
