@@ -13,118 +13,29 @@ error_reporting(E_ALL);
 /// ส่วนการกำหนดค่านี้สามารถทำเป็นไฟล์ include แทนได้
 define('LINE_LOGIN_CHANNEL_ID','1576551466');
 define('LINE_LOGIN_CHANNEL_SECRET','e389e6701d0f047c734d9d5c1c197103');
-define('LINE_LOGIN_CALLBACK_URL','https://line-log.herokuapp.com/');
+define('LINE_LOGIN_CALLBACK_URL','https://line-log.herokuapp.com');
  
 $LineLogin = new LineLoginLib(
     LINE_LOGIN_CHANNEL_ID, LINE_LOGIN_CHANNEL_SECRET, LINE_LOGIN_CALLBACK_URL);
      
-if(!isset($_SESSION['ses_login_accToken_val'])){    
-    $LineLogin->authorize(); 
-    exit;
-}
+// กรณีต้องการดึงค่าเฉพาะ access token ไปใช้งาน
+/*$accToken = $LineLogin->requestAccessToken($_GET);
+if(isset($accToken) && is_string($accToken)){
+    $_SESSION['ses_login_accToken_val'] = $accToken;
+}*/
  
-$accToken = $_SESSION['ses_login_accToken_val'];
-// Status Token Check
-if($LineLogin->verifyToken($accToken)){
-    echo $accToken."<br><hr>";
-    echo "Token Status OK <br>";  
-}
- 
- 
-echo "<pre>";
-// Status Token Check with Result 
-//$statusToken = $LineLogin->verifyToken($accToken, true);
-//print_r($statusToken);
- 
- 
-//////////////////////////
-echo "<hr>";
-// GET LINE USERID FROM USER PROFILE
-//$userID = $LineLogin->userProfile($accToken);
-//echo $userID;
- 
-//////////////////////////
-echo "<hr>";
-// GET LINE USER PROFILE 
-$userInfo = $LineLogin->userProfile($accToken,true);
-if(!is_null($userInfo) && is_array($userInfo) && array_key_exists('userId',$userInfo)){
-    print_r($userInfo);
-}
- 
-//exit;
-echo "<hr>";
- 
-if(isset($_SESSION['ses_login_userData_val']) && $_SESSION['ses_login_userData_val']!=""){
-    // GET USER DATA FROM ID TOKEN
-    $lineUserData = json_decode($_SESSION['ses_login_userData_val'],true);
-    print_r($lineUserData); 
-    echo "<hr>";
-    echo "Line UserID: ".$lineUserData['sub']."<br>";
-    echo "Line Display Name: ".$lineUserData['name']."<br>";
-    echo '<img style="width:100px;" src="'.$lineUserData['picture'].'" /><br>';
-}
- 
- 
-echo "<hr>";
-if(isset($_SESSION['ses_login_refreshToken_val']) && $_SESSION['ses_login_refreshToken_val']!=""){
-    echo '
-    <form method="post">
-    <button type="submit" name="refreshToken">Refresh Access Token</button>
-    </form>   
-    ';  
-}
-if(isset($_SESSION['ses_login_refreshToken_val']) && $_SESSION['ses_login_refreshToken_val']!=""){
-    if(isset($_POST['refreshToken'])){
-        $refreshToken = $_SESSION['ses_login_refreshToken_val'];
-        $new_accToken = $LineLogin->refreshToken($refreshToken); 
-        if(isset($new_accToken) && is_string($new_accToken)){
-            $_SESSION['ses_login_accToken_val'] = $new_accToken;
-        }       
-        $LineLogin->redirect("index.php");
+// กรณีต้องการดึงค่าเฉพาะ access token และค่าอื่นๆ รวมถึงข้อมูลผู้ใช้ เช่น userId ในไลน์ ไปใช้งาน
+$dataToken = $LineLogin->requestAccessToken($_GET, true);
+if(!is_null($dataToken) && is_array($dataToken)){
+    if(array_key_exists('access_token',$dataToken)){
+        $_SESSION['ses_login_accToken_val'] = $dataToken['access_token'];
     }
+    if(array_key_exists('refresh_token',$dataToken)){
+        $_SESSION['ses_login_refreshToken_val'] = $dataToken['refresh_token'];
+    }   
+    if(array_key_exists('id_token',$dataToken)){
+        $_SESSION['ses_login_userData_val'] = $dataToken['user'];
+    }       
 }
-// Revoke Token
-//if($LineLogin->revokeToken($accToken)){
-//  echo "Logout Line Success<br>";   
-//}
-//
-// Revoke Token with Result
-//$statusRevoke = $LineLogin->revokeToken($accToken, true);
-//print_r($statusRevoke);
+$LineLogin->redirect('login_uselib.php');
 ?>
-<?php
-echo "<hr>";
-if($LineLogin->verifyToken($accToken)){
-?>
-<form method="post">
-<button type="submit" name="lineLogout">LINE Logout</button>
-</form>
-<?php }else{ ?>
-<form method="post">
-<button type="submit" name="lineLogin">LINE Login</button>
-</form>   
-<?php } ?>
-<?php
-if(isset($_POST['lineLogin'])){
-    $LineLogin->authorize(); 
-    exit;   
-}
-if(isset($_POST['lineLogout'])){
-    unset(
-        $_SESSION['ses_login_accToken_val'],
-        $_SESSION['ses_login_refreshToken_val'],
-        $_SESSION['ses_login_userData_val']
-    );  
-    echo "<hr>";
-    if($LineLogin->revokeToken($accToken)){
-        echo "Logout Line Success<br>";   
-    }
-    echo '
-    <form method="post">
-    <button type="submit" name="lineLogin">LINE Login</button>
-    </form>   
-    ';
-    $LineLogin->redirect("index.php");
-}
-?>
-
