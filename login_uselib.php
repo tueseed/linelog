@@ -1,9 +1,8 @@
 <?php
 session_start();
 require_once("LineLoginLib.php");
-function pushmsg($uid)
+function pushmsg($uid,$accToken)
 {
- $access_token ='e389e6701d0f047c734d9d5c1c197103';
 $url = 'https://api.line.me/v2/bot/message/push';
 $messages = [
            "type"=> "text",
@@ -14,7 +13,7 @@ $messages = [
             'messages' => [$messages]
         ];
 $post = json_encode($data);
-        $headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $access_token);
+        $headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $$accToken);
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -72,7 +71,7 @@ echo "<hr>";
 // GET LINE USER PROFILE 
 $userInfo = $LineLogin->userProfile($accToken,true);
 if(!is_null($userInfo) && is_array($userInfo) && array_key_exists('userId',$userInfo)){
-    print_r($userInfo);
+    print_r($userInfo,$accToken);
 }
  
 //exit;
