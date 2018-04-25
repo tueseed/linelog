@@ -9,7 +9,7 @@ $messages = [
             "text"=> "nxlkznvozvnkzlckvn"
         ];
  $data = [
-            'to' => $uid,
+            'to' => '$uid',
             'messages' => [$messages]
         ];
 $post = json_encode($data);
